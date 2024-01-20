@@ -20,17 +20,11 @@ class VendorSweet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float, nullable=False)
 
-    # Validation: Price cannot be blank
     @validates('price')
     def validate_price(self, key, value):
         if not value:
             raise ValueError("Price cannot be blank.")
-        return value
-
-    # Validation: Price cannot be a negative number
-    @validates('price')
-    def validate_non_negative_price(self, key, value):
-        if value and value < 0:
+        elif value < 0:
             raise ValueError("Price cannot be a negative number.")
         return value
 

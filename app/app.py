@@ -4,13 +4,17 @@ from flask import Flask, make_response, jsonify, request
 from flask_migrate import Migrate
 from models import db, Vendor, Sweet, VendorSweet
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app():
+  app = Flask(__name__)
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+  app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+  db.init_app(app)
+  return app
+
+app = create_app()
 migrate = Migrate(app, db)
 
-db.init_app(app)
 
 # Routes
 
