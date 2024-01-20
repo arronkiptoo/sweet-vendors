@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
-
-from flask import Flask, make_response, jsonify, request
+from flask import Flask, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from models import db, Vendor, Sweet, VendorSweet
+from models import db, Vendor, Sweet, VendorSweet  # Import models
 
 def create_app():
-  app = Flask(__name__)
-  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-  app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app = Flask(__name__)
 
-  db.init_app(app)
-  return app
+    # Set configuration directly on the app object
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-app = create_app()
-migrate = Migrate(app, db)
+    # Initialize SQLAlchemy and Migrate
+    db.init_app(app)  # Use the existing db instance
+    migrate = Migrate(app, db)
 
+    # ... (add any other configurations or extensions if needed)
+
+    return app
+
+app = create_app()  # Create the Flask application
 
 # Routes
-
 @app.route('/vendors', methods=['GET'])
 def get_vendors():
     vendors = Vendor.query.all()
@@ -78,5 +82,5 @@ def delete_vendor_sweet(vs_id):
     else:
         return jsonify({'error': 'VendorSweet not found'}), 404
 
-if __name__ == '__main__':
-    app.run(port=5555)
+if __name__ == "__main__":
+    app.run(debug=True)

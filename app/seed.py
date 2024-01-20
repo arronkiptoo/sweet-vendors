@@ -1,24 +1,29 @@
-from app import db, Vendor, Sweet, VendorSweet
+from app import create_app, db
+from models import Vendor, Sweet, VendorSweet
 
-# Create vendors
-insomnia_cookies = Vendor(name="Insomnia Cookies")
-cookies_cream = Vendor(name="Cookies Cream")
+# Create the Flask application
+app = create_app()
 
-# Create sweets
-chocolate_chip_cookie = Sweet(name="Chocolate Chip Cookie")
-brownie = Sweet(name="Brownie")
+# Use the application context
+with app.app_context():
+    # Your database-related code here
+    insomnia_cookies = Sweet(name='Insomnia Cookies', description='Delicious cookies for late-night cravings')
+    cookies_cream = Sweet(name='Cookies and Cream', description='A delightful mix of cookies and cream')
+    chocolate_chip_cookie = Sweet(name='Chocolate Chip Cookie', description='Classic chocolate chip goodness')
+    brownie = Sweet(name='Brownie', description='Rich and fudgy brownies')
 
-# Add vendors and sweets to the database
-db.session.add_all([insomnia_cookies, cookies_cream, chocolate_chip_cookie, brownie])
-db.session.commit()
+    vendor1 = Vendor(name='Sweet Delights', location='Downtown')
+    vendor2 = Vendor(name='Treats Galore', location='Uptown')
 
-# Create vendor sweets
-vendor_sweet_1 = VendorSweet(price=200, vendor=insomnia_cookies, sweet=chocolate_chip_cookie)
-vendor_sweet_2 = VendorSweet(price=300, vendor=insomnia_cookies, sweet=brownie)
-vendor_sweet_3 = VendorSweet(price=250, vendor=cookies_cream, sweet=chocolate_chip_cookie)
+    # Associate sweets with vendors
+    vendor1.vendor_sweets.extend([VendorSweet(price=2.0, sweet=insomnia_cookies)])
+    vendor1.vendor_sweets.extend([VendorSweet(price=2.5, sweet=cookies_cream)])
+    
+    vendor2.vendor_sweets.extend([VendorSweet(price=1.8, sweet=chocolate_chip_cookie)])
+    vendor2.vendor_sweets.extend([VendorSweet(price=3.0, sweet=brownie)])
 
-# Add vendor sweets to the database
-db.session.add_all([vendor_sweet_1, vendor_sweet_2, vendor_sweet_3])
-db.session.commit()
+    # Add sweets and vendors to the database session
+    db.session.add_all([insomnia_cookies, cookies_cream, chocolate_chip_cookie, brownie, vendor1, vendor2])
 
-print("Seed data added successfully.")
+    # Commit the changes to the database
+    db.session.commit()
